@@ -1,0 +1,155 @@
+# Complete set of parameters with two dictionaries: configuration parameters and the arguments to provide to MICMAC 
+
+
+
+[run_configuration]
+
+# [run_configuration.save]
+#     path_save_directory = '/Users/mag/Documents/Friendship/MICMAC_II/validation_generalized_patches/'
+#     # path to save the results ; the directory provided must be named as "save_directory/", as a check to avoid storing large files in the wrong directory 
+
+# [run_configuration.general]
+#     # current run name
+#     file_ver = 'hp_mbeta_mfg_SO_fsky_v1f' # to change v1 with the number of run (ie when starting a 2nd run it's v2)
+#     ## Note: if the file_ver provided is identical than the one of a previous run, the previous run outputs will be erased 
+    
+#     # patch distribution
+#     path_file_spv = '/Users/mag/Documents/Friendship/MICMAC_II/validation_generalized_patches/patches/patches_SO_fgLFHF_10.npy' # path of the file containing the spatial variability patches, if not provided, the patches will be simulated on-the-fly
+        
+#     use_preconditioner = true   # implemented only full sky
+    
+#     save_last_sample = true
+
+#     [run_configuration.general.previous_run]
+        
+#         former_file_ver = '' # name of the previous run 
+#         use_last_sample = false # to restart from the last samples of a previous run, given by the name former_file_ver 
+#         stack_former_file_ver = false # to stack the outputs of the previous run with the new one 
+#         use_former_input_maps = false # to use the input maps of the former run, if the run is restarted from a previous run 
+
+# [run_configuration.read_input]
+#     input_from_files = false # to use the input maps from files, instead of simulating them ; if true, the path_input_maps must be provided     
+#     path_input_maps = '' # Optional, path to frequency maps to be provided ; note that those frequency maps will be accounted as being given already pre-processed, meaning that they will not be masked using the provided mask ;  the maps must be provided as numpy array with shape (n_frequencies, n_Stokes, n_pixels)
+
+
+# [run_configuration.simulation]
+    input_from_simulation = true # to perform the simulations of the input maps, foregrounds and noise ; if false, the input maps must be provided in path_input_maps
+
+    ## Simulations
+    
+    # seed for foregrounds (if nedded) and noise simulations
+    seed_realization_input = 42 # start seed for the noise realization, and possibly the PySM foreground components (when on-the-fly random contributions are added)
+    
+    # Input CMB
+    # seed_realization_CMB = 42 # optional, seed for the CMB realization, otherwise taken as seed_realization_input 
+    lmin_input_CMB = 2 # lmin for the input CMB power spectrum
+    band_limit_input = false
+    r_true = 1e-3 # input tensor-to-scalar ratio r for CMB simulation
+    
+    # Input foregrounds
+    # define sky -- for simulation of input maps ; to be ignored if path_input_maps is provided 
+    fgs_model = 'd0' #'customized_parametric' #'s0d0' # PySM simulation to use as is
+    # fgs_model_init = ['s1', 'd1'] # PySM simulation to customize 
+    # nside_spv_model = [2, 2] # Defining the spatial variability of the output noiseless foregrounds as a set of nside respectively for the first and second foreground components 
+    # idx_ref_freq = 
+    # beta_pl_init = -2.34026616   # only used if:  initial_guess_Bf = 'from spectral parameters'
+    # beta_mbb_init = 1.46648868
+    # temp_mbb_init = 22.12995539
+
+
+
+# [run_configuration.mask]
+    # mask -- necessary to simulate input data, but as well to account for the observed area in the definition of the pixel noise covariance 
+    use_mask = false
+    
+    path_mask = '' #'/Users/mag/Documents/Friendship/MICMAC_II/masks/mask_SO_SAT_apodized.fits'
+    use_nhits = false
+    use_treshold = false
+    relative_treshold = 4e-1   # for mask non binary 
+
+# [run_configuration.c_approx]
+#     # c_approx
+
+#     # most of the options were set for the MICS paper, and will eventually be removed 
+
+#     path_file_c_approx = ''
+#     path_file_c_approx_BB = ''
+#     use_alpha_optimal = false # in case c_approx is built from simulations, use the optimal alpha value given by the MICS paper (Leloup et al. 2024)
+#     alpha_value_EE = 1 
+#     alpha_value = 1 # value of alpha to use for the c_approx
+    
+#     save_c_approx = true
+
+# [run_configuration.initial_values]
+#     # init values
+#     initial_guess_r = 1e-2 #1e-4
+#     # initial_guess_Bf = [ ] # optional, first guess for each Bf 
+#     sigma_gap = 0  # random move from init for Bf and r instead of begining exactly at the initial guess 
+#     # note: the Bf initial parameters are usually set from the simulated foregrounds, see script 
+
+# [run_configuration.covariance_step_size]
+#     # step-sizes Bf and r 
+#     path_cov_Bf_r = '/Users/mag/Documents/Friendship/MICMAC_II/MICS_run/Fisher_matrices/Fisher_matrix_SO_SAT_EB_model_d0s0_noise_True_seed_42_lmin2_lmax128.txt' #'Fake_Fisher_matrix_LiteBIRD.txt' 
+
+#     # to fine tune according to runs result
+#     factor_Fisher = 1 
+#     factor_Fisher_r = 1
+    
+
+# [run_configuration.scam]
+#     # param for SCAM
+#     reset_SCAM = false # to reset the SCAM parameters, so that a new SCAM is built from the new run using the burn_in_scam parameter for the new burn-in
+        
+
+# [run_configuration.multiple_chains]
+#     # to perform multiple realizations, one per MPI_task ==> IMPORTANT: do not change number of MPI_tasks when continuing a run 
+#     multi_realizations = false
+ 
+# # beam parameters
+# [run_configuration.beam_params]
+#     apply_beam = true
+#     correct_theory_with_beam = true
+#     beam_fwhm = [100, 100, 100, 100, 100, 100] # [91, 63, 30, 17, 11, 9] # arcmin
+#     common_beam_fwhm = 100 # arcmin
+#     correct_data_common_beam = false
+
+
+
+[sampler_params]
+
+
+    # options of the sampling
+    disable_chex = false # quick test parameters 
+
+    # sampling parameters
+    nside = 32
+    lmax = 64
+    nstokes = 2
+    lmin = 2
+    n_iter = 3 # Number of iterations for Python estimation of alms
+    n_components = 2 # Number of components to sample, usually 3 (CMB + 2 foregrounds components)
+    pos_special_freqs = [] # position of the special frequencies in the frequency array, if not provided, the first and last frequencies will be considered as special frequencies
+    indexes_free_Bf = false # Bf indexes that will be sampled
+    indices_fixed_Bf = false
+
+    # seed for the begining of the chain 
+    seed = 50
+
+
+    # Metropolis-Hastings-within-Gibbs parameters
+    step_size_Bf_1 = 1e-1 # Provide step-size for the first column of Bf ; it can also be provided as a list 
+    step_size_Bf_2 = 1e-1 #5e-5 # Provide step-size for the second column of Bf ; it can also be provided as a list 
+
+    step_size_Sf_1 = 1e-1 # Provide step-size for the first column of Bf ; it can also be provided as a list 
+    step_size_Sf_2 = 1e-1 #5e-5 # Provide step-size for the second column of Bf ; it can also be provided as a list 
+
+    # instrument parameters
+    instrument_name = 'SO_SAT' #example: 'LiteBIRD' or 'SO_SAT' # Either provide instrument name, then freq_inverse_noise and frequency_array will be taken from fgbuster,
+    # or provide expcitely freq_inverse_noise and frequency_array with instrument_name="customized_instrument"
+    # frequency_array = [90]
+    # depth_p = [4]
+
+
+    # iterations 
+    number_iterations_sampling = 208 # Maximum number of iterations for the sampling
+    number_iterations_done = 0 # Number of iterations already accomplished, in case the chain is resuming from a previous run 
